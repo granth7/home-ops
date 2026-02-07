@@ -1,0 +1,130 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app satisfactory
+  namespace: games
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: satisfactory
+  maxHistory: 3
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+
+  values:
+    defaultPodOptions:
+      dnsPolicy: ClusterFirstWithHostNet
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+
+
+    controllers:
+      satisfactory:
+        type: statefulset
+
+        containers:
+          app:
+            image:
+              repository: ghcr.io/wolveix/satisfactory-server
+              # renovate: datasource=docker depName=ghcr.io/wolveix/satisfactory-server
+              tag: v1.9.10
+            env:
+              TZ: "America/Los_Angeles"
+              ROOTLESS: "true"
+              AUTOPAUSE: "true"
+              AUTOSAVEINTERVAL: "60"
+              AUTOSAVENUM: "30"
+              AUTOSAVEONDISCONNECT: "true"
+              CRASHREPORT: "false"
+              MAXPLAYERS: "5"
+              MAXTICKRATE: "120" # default is a low 30
+              NETWORKQUALITY: "3" # 0-3, 3 is Ultra (default)
+              TIMEOUT: "300"
+              STEAMBETA: "true"
+            ports:
+              - name: "api"
+                containerPort: 7777
+                protocol: TCP
+              - name: "game"
+                containerPort: 7777
+                protocol: UDP
+              - name: "messaging"
+                containerPort: 8888
+                protocol: TCP
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: false
+              capabilities:
+                drop:
+                  - ALL
+            probes:
+              startup:
+                enabled: false
+              liveness:
+                enabled: false
+              readiness:
+                enabled: false
+            resources:
+              requests:
+                memory: 4Gi
+              limits:
+                memory: 8Gi
+
+
+
+    service:
+      app:
+        enabled: true
+        controller: *app
+        type: LoadBalancer
+        allocateLoadBalancerNodePorts: true
+        annotations:
+          external-dns.alpha.kubernetes.io/hostname: "satisfactory.${SECRET_DOMAIN}"
+          lbipam.cilium.io/ips: "${IPAM_IP_SATISFACTORY}"
+        labels:
+        externalTrafficPolicy: Cluster
+        internalTrafficPolicy: Local
+        ports:
+          game-udp:
+            enabled: true
+            primary: true
+            port: 7777
+            protocol: UDP
+          game-tcp:
+            enabled: true
+            port: 7777
+            protocol: TCP
+          messaging:
+            enabled: true
+            port: 8888
+            protocol: TCP
+
+
+    persistence:
+      config:
+        accessMode: ReadWriteOnce
+        enabled: true
+        size: 25Gi
+        storageClass: openebs-hostpath
+        globalMounts:
+          - path: /config
+      server-cache:
+        enabled: true
+        existingClaim: "sf-gamedata"
+        globalMounts:
+          - path: /config/gamefiles
