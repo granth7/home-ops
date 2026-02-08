@@ -94,7 +94,7 @@ spec:
         type: LoadBalancer
         allocateLoadBalancerNodePorts: true
         externalTrafficPolicy: Cluster
-        internalTrafficPolicy: Local
+        internalTrafficPolicy: Cluster
         ports:
           game-udp:
             enabled: true
