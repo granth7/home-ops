@@ -19,7 +19,6 @@ spec:
       retries: 3
   uninstall:
     keepHistory: false
-
   values:
     defaultPodOptions:
       dnsPolicy: ClusterFirstWithHostNet
@@ -31,8 +30,6 @@ spec:
         runAsGroup: 1000
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
-
-
     controllers:
       satisfactory:
         type: statefulset
@@ -84,17 +81,13 @@ spec:
                 memory: 4Gi
               limits:
                 memory: 8Gi
-
-
-
     service:
       app:
-        enabled: true
-        controller: *app
+        controller: satisfactory
         type: LoadBalancer
-        allocateLoadBalancerNodePorts: true
-        externalTrafficPolicy: Cluster
-        internalTrafficPolicy: Cluster
+        annotations:
+          external-dns.alpha.kubernetes.io/hostname: "satisfactory.${SECRET_DOMAIN}"
+          lbipam.cilium.io/ips: "${IPAM_IP_SATISFACTORY}"
         ports:
           game-udp:
             enabled: true
@@ -109,10 +102,6 @@ spec:
             enabled: true
             port: 8888
             protocol: TCP
-        annotations:
-          external-dns.alpha.kubernetes.io/hostname: "satisfactory.${SECRET_DOMAIN}"
-          lbipam.cilium.io/ips: "${IPAM_IP_SATISFACTORY}"
-
     persistence:
       config:
         accessMode: ReadWriteOnce
