@@ -43,13 +43,13 @@ spec:
   timeout: 5m
   wait: false
   patches:
-    # 1. Add Sops decryption (Standard Patch)
+    # Add Sops decryption (Standard Patch)
     - patch: |-
         apiVersion: kustomize.toolkit.fluxcd.io/v1
         kind: Kustomization
         metadata:
           name: not-used
-          namespace: not-used
+          namespace: flux-system
         spec:
           decryption:
             provider: sops
