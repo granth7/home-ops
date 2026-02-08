@@ -96,7 +96,6 @@ spec:
         annotations:
           external-dns.alpha.kubernetes.io/hostname: "satisfactory.${SECRET_DOMAIN}"
           lbipam.cilium.io/ips: "${IPAM_IP_SATISFACTORY}"
-        labels:
         externalTrafficPolicy: Cluster
         internalTrafficPolicy: Local
         ports:
