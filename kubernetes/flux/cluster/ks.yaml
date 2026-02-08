@@ -55,12 +55,10 @@ spec:
     target:
       group: kustomize.toolkit.fluxcd.io
       kind: Kustomization
-  - patch: |-
-      apiVersion: kustomize.toolkit.fluxcd.io/v1
-      kind: Kustomization
-      metadata:
-        name: not-used
-        namespace: flux-system
+  - patch: |
+      - op: add
+        path: /metadata/namespace
+        value: flux-system
     target:
       group: kustomize.toolkit.fluxcd.io
       kind: Kustomization
