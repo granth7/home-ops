@@ -3,3 +3,12 @@ kind: Kustomization
 resources:
   - ./ns.yaml
   - ./satisfactory/ks.yaml
+patches:
+  - patch: |-
+      - op: add
+        path: /metadata/namespace
+        value: flux-system
+    target:
+      group: kustomize.toolkit.fluxcd.io
+      kind: Kustomization
+      name: satisfactory

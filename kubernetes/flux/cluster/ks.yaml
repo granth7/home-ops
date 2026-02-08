@@ -55,12 +55,3 @@ spec:
       target:
         group: kustomize.toolkit.fluxcd.io
         kind: Kustomization
-
-    # 2. FORCE Namespace to flux-system (JSON Patch)
-    - patch: |-
-        - op: add
-          path: /metadata/namespace
-          value: flux-system
-      target:
-        group: kustomize.toolkit.fluxcd.io
-        kind: Kustomization
