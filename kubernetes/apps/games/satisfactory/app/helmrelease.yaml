@@ -93,9 +93,6 @@ spec:
         controller: *app
         type: LoadBalancer
         allocateLoadBalancerNodePorts: true
-        annotations:
-          external-dns.alpha.kubernetes.io/hostname: "satisfactory.${SECRET_DOMAIN}"
-          lbipam.cilium.io/ips: "${IPAM_IP_SATISFACTORY}"
         externalTrafficPolicy: Cluster
         internalTrafficPolicy: Local
         ports:
@@ -112,7 +109,9 @@ spec:
             enabled: true
             port: 8888
             protocol: TCP
-
+        annotations:
+          external-dns.alpha.kubernetes.io/hostname: "satisfactory.${SECRET_DOMAIN}"
+          lbipam.cilium.io/ips: "${IPAM_IP_SATISFACTORY}"
 
     persistence:
       config:
