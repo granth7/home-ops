@@ -53,16 +53,6 @@ spec:
               NETWORKQUALITY: "3" # 0-3, 3 is Ultra (default)
               TIMEOUT: "300"
               STEAMBETA: "true"
-            ports:
-              - name: "api"
-                containerPort: 7777
-                protocol: TCP
-              - name: "game"
-                containerPort: 7777
-                protocol: UDP
-              - name: "messaging"
-                containerPort: 8888
-                protocol: TCP
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: false
