@@ -80,10 +80,10 @@ spec:
               requests:
                 memory: 4Gi
               limits:
-                memory: 8Gi
+                memory: 8Giz
     service:
       app:
-        controller: satisfactory
+        controller: *app
         type: LoadBalancer
         annotations:
           external-dns.alpha.kubernetes.io/hostname: "satisfactory.${SECRET_DOMAIN}"
