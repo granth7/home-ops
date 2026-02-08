@@ -57,8 +57,8 @@ spec:
       kind: Kustomization
   - patch: |
       - op: add
-        path: /metadata/namespace
-        value: flux-system
+        path: "/metadata/namespace"
+        value: "flux-system"
     target:
       group: kustomize.toolkit.fluxcd.io
       kind: Kustomization
