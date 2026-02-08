@@ -80,12 +80,16 @@ spec:
           lbipam.cilium.io/ips: "${IPAM_IP_SATISFACTORY}"
         ports:
           game-udp:
+            enabled: true
+            primary: true
             port: 7777
             protocol: UDP
           game-tcp:
+            enabled: true
             port: 7777
             protocol: TCP
           messaging:
+            enabled: true
             port: 8888
             protocol: TCP
     persistence:

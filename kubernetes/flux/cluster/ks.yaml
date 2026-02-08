@@ -49,10 +49,16 @@ spec:
         kind: Kustomization
         metadata:
           name: not-used
-          namespace: flux-system
         spec:
           decryption:
             provider: sops
+      target:
+        group: kustomize.toolkit.fluxcd.io
+        kind: Kustomization
+    # Ensure namespace is set on all child Kustomizations
+    - patch: |-
+        metadata:
+          namespace: flux-system
       target:
         group: kustomize.toolkit.fluxcd.io
         kind: Kustomization
