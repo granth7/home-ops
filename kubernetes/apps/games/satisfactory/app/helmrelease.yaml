@@ -19,7 +19,6 @@ spec:
       retries: 3
   uninstall:
     keepHistory: false
-
   values:
     defaultPodOptions:
       dnsPolicy: ClusterFirstWithHostNet
@@ -31,8 +30,6 @@ spec:
         runAsGroup: 1000
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
-
-
     controllers:
       satisfactory:
         type: statefulset
@@ -56,16 +53,6 @@ spec:
               NETWORKQUALITY: "3" # 0-3, 3 is Ultra (default)
               TIMEOUT: "300"
               STEAMBETA: "true"
-            ports:
-              - name: "api"
-                containerPort: 7777
-                protocol: TCP
-              - name: "game"
-                containerPort: 7777
-                protocol: UDP
-              - name: "messaging"
-                containerPort: 8888
-                protocol: TCP
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: false
@@ -84,21 +71,13 @@ spec:
                 memory: 4Gi
               limits:
                 memory: 8Gi
-
-
-
     service:
       app:
-        enabled: true
-        controller: *app
+        controller: satisfactory
         type: LoadBalancer
-        allocateLoadBalancerNodePorts: true
         annotations:
           external-dns.alpha.kubernetes.io/hostname: "satisfactory.${SECRET_DOMAIN}"
           lbipam.cilium.io/ips: "${IPAM_IP_SATISFACTORY}"
-        labels:
-        externalTrafficPolicy: Cluster
-        internalTrafficPolicy: Local
         ports:
           game-udp:
             enabled: true
@@ -113,8 +92,6 @@ spec:
             enabled: true
             port: 8888
             protocol: TCP
-
-
     persistence:
       config:
         accessMode: ReadWriteOnce
